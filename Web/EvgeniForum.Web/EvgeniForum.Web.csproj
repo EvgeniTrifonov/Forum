@@ -36,4 +36,10 @@
     <ProjectReference Include="..\EvgeniForum.Web.Infrastructure\EvgeniForum.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\EvgeniForum.Web.ViewModels\EvgeniForum.Web.ViewModels.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\sports.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
