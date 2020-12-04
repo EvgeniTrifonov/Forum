@@ -1,9 +1,8 @@
 ﻿namespace EvgeniForum.Web.ViewModels.Settings
 {
+    using AutoMapper;
     using EvgeniForum.Data.Models;
     using EvgeniForum.Services.Mapping;
-
-    using AutoMapper;
 
     public class SettingViewModel : IMapFrom<Setting>, IHaveCustomMappings
     {

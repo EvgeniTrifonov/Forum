@@ -1,8 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace EvgeniForum.Data.Migrations
+﻿namespace EvgeniForum.Data.Migrations
 {
+    using System;
+
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class AddInitialModels : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +21,7 @@ namespace EvgeniForum.Data.Migrations
                     Name = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    ImgUrl = table.Column<string>(nullable: true)
+                    ImgUrl = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {
@@ -40,7 +41,7 @@ namespace EvgeniForum.Data.Migrations
                     Title = table.Column<string>(nullable: true),
                     Content = table.Column<string>(nullable: true),
                     UserId = table.Column<string>(nullable: true),
-                    CategoryId = table.Column<int>(nullable: false)
+                    CategoryId = table.Column<int>(nullable: false),
                 },
                 constraints: table =>
                 {
@@ -71,7 +72,7 @@ namespace EvgeniForum.Data.Migrations
                     DeletedOn = table.Column<DateTime>(nullable: true),
                     PostId = table.Column<int>(nullable: false),
                     Content = table.Column<string>(nullable: true),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {

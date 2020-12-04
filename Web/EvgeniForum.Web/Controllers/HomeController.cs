@@ -2,31 +2,31 @@
 {
     using System.Diagnostics;
     using System.Linq;
-    using EvgeniForum.Data;
+
+    using EvgeniForum.Data.Common.Repositories;
+    using EvgeniForum.Data.Models;
+    using EvgeniForum.Services.Data;
+    using EvgeniForum.Services.Mapping;
     using EvgeniForum.Web.ViewModels;
     using EvgeniForum.Web.ViewModels.Home;
     using Microsoft.AspNetCore.Mvc;
 
     public class HomeController : BaseController
     {
-        private readonly ApplicationDbContext db;
+        private readonly ICategoriesService categoriesService;
 
-        public HomeController(ApplicationDbContext db)
+        public HomeController(ICategoriesService categoriesService)
         {
-            this.db = db;
+            this.categoriesService = categoriesService;
         }
-        
+
         public IActionResult Index()
         {
-            var viewModel = new IndexViewModel();
-            var categories = this.db.Categories.Select(x => new IndexCategoriesViewModel
+            var viewModel = new IndexViewModel
             {
-                Description = x.Description,
-                ImageUrl = x.ImgUrl,
-                Name = x.Name,
-                Title = x.Title,
-            }).ToList();
-            viewModel.Categories = categories;
+                Categories = this.categoriesService
+                .GetAll<IndexCategoriesViewModel>(),
+            };
             return this.View(viewModel);
         }
 
