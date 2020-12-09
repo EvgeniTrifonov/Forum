@@ -1,8 +1,9 @@
 ﻿namespace EvgeniForum.Web.ViewModels.Categories
 {
+    using System;
+
     using EvgeniForum.Data.Models;
     using EvgeniForum.Services.Mapping;
-    using System;
 
     public class PostInCategoryViewModel : IMapFrom<Post>
     {
