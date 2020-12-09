@@ -27,7 +27,8 @@
 
         public IActionResult ById(int id)
         {
-            return this.View();
+            var postViewModel = this.postsService.GetById<PostViewModel>(id);
+            return this.View(postViewModel);
         }
 
         [Authorize]

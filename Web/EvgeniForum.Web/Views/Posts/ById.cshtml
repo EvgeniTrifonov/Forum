@@ -1,0 +1,8 @@
+﻿@model EvgeniForum.Web.ViewModels.Posts.PostViewModel
+@{
+    this.ViewData["Title"] = Model.Title;
+}
+
+<h1>@Model.Title</h1>
+
+@Html.Raw(Model.SanitizedContent)
