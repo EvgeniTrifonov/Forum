@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+
     using EvgeniForum.Data.Common.Models;
 
     public class Post : BaseDeletableModel<int>

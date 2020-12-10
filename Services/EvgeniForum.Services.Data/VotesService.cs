@@ -15,6 +15,14 @@
             this.votesRepository = votesRepository;
         }
 
+        public int GetVotes(int postId)
+        {
+            var votes = this.votesRepository.All()
+                .Where(x => x.PostId == postId)
+                .Sum(x => (int)x.Type);
+            return votes;
+        }
+
         public async Task VoteAsync(int postId, string userId, bool isUpVote)
         {
             var vote = this.votesRepository.All()

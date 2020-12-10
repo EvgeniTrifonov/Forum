@@ -1,8 +1,9 @@
-﻿using EvgeniForum.Data.Common.Models;
-using System.ComponentModel.DataAnnotations;
-
-namespace EvgeniForum.Data.Models
+﻿namespace EvgeniForum.Data.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using EvgeniForum.Data.Common.Models;
+
     public class Vote : BaseModel<int>
     {
         public int PostId { get; set; }
