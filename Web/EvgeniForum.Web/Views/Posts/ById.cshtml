@@ -18,6 +18,7 @@
                             <div class="text-muted small">@Model.CreatedOn</div>
                         </div>
                         <div class="text-muted small ml-3">
+                            <form id="votesForm" method="post"></form>
                             <div>
                                 <a href="#" onclick="sendVote(@Model.Id, true)">
                                     <i class="fa fa-thumbs-up"></i>
@@ -51,12 +52,14 @@
     <script>
         function sendVote(postId, isUpVote) {
             var json = { postId: postId, isUpVote: isUpVote };
+            var token = $("#votesForm input[name = __RequestVerificationToken]").val();
             $.ajax({
                 url: "/api/votes",
                 type: "POST",
                 data: JSON.stringify(json),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                headers: { 'X-CSRF-TOKEN': token },
                 success: function (data) {
                     $("#voteCount").html(data.voteCount);
                 }
