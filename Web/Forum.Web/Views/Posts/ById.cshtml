@@ -1,6 +1,56 @@
 ﻿@model PostViewModel
 @{
     this.ViewData["Title"] = Model.Title;
+    void DisplayComments(int? parentId)
+    {
+        var comments = this.Model.Comments.Where(x => x.ParentId == parentId);
+        if (!comments.Any())
+        {
+            return;
+        }
+
+        @foreach (var comment in comments)
+        {
+            <div class="container-fluid mt-100">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <div class="media flex-wrap w-100 align-items-center">
+                                    <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1574583246/AAA/2.jpg" class="d-block ui-w-40 rounded-circle" alt="">
+                                    <div class="media-body ml-3">
+                                        @comment.UserUserName
+                                        <div class="text-muted small">
+                                            <time datetime="@comment.CreatedOn.ToString("O")"></time>
+                                        </div>
+                                    </div>
+                                    <div class="text-muted small ml-3">
+                                        @if (this.User.Identity.IsAuthenticated)
+                                        {
+                                            <div class="px-4 pt-3"> <button type="button" class="btn btn-secondary" onclick="showAddCommentForm(@comment.Id)"><i class="fa fa-plus"></i>&nbsp; Answer</button> </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <article>
+                                    @Html.Raw(comment.SanitizedContent)
+                                </article>
+                                @{ DisplayComments(comment.Id); }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+@if (this.TempData["InfoMessage"] != null)
+{
+    <div class="alert alert-success">
+        @this.TempData["InfoMessage"]
+    </div>
 }
 
 <h1>@Model.Title</h1>
@@ -15,7 +65,9 @@
                         <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1574583246/AAA/2.jpg" class="d-block ui-w-40 rounded-circle" alt="">
                         <div class="media-body ml-3">
                             @Model.UserUserName
-                            <div class="text-muted small">@Model.CreatedOn</div>
+                            <div class="text-muted small">
+                                <time datetime="@Model.CreatedOn.ToString("O")"></time>
+                            </div>
                         </div>
                         <div class="text-muted small ml-3">
                             <form id="votesForm" method="post"></form>
@@ -34,40 +86,15 @@
                     </div>
                 </div>
                 <div class="card-body">
-
                     @Html.Raw(Model.SanitizedContent)
-
-                    <div class="clearfix mb-3">
-                        <div class="px-4 pt-3"> <button type="button" class="btn btn-primary float-right" onclick="showAddCommentForm()"><i class="fa fa-plus"></i>&nbsp; Comment</button> </div>
-                    </div>
-                    @foreach (var comment in this.Model.Comments)
+                    @if (this.User.Identity.IsAuthenticated)
                     {
-                        <div class="container-fluid mt-100">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            <div class="media flex-wrap w-100 align-items-center">
-                                                <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1574583246/AAA/2.jpg" class="d-block ui-w-40 rounded-circle" alt="">
-                                                <div class="media-body ml-3">
-                                                    @comment.UserUserName
-                                                    <div class="text-muted small">@comment.CreatedOn</div>
-                                                </div>
-                                                <div class="clearfix mb-3">
-                                                    <div class="px-4 pt-3"> <button type="button" class="btn btn-secondary float-right" onclick="showAddCommentForm()"><i class="fa fa-plus"></i>&nbsp; Answer</button> </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            @Html.Raw(@comment.SanitizedContent)
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="clearfix mb-3">
+                            <div class="px-4 pt-3"> <button type="button" class="btn btn-primary float-right" onclick="showAddCommentForm()"><i class="fa fa-plus"></i>&nbsp; Comment</button> </div>
                         </div>
                     }
+                    @{ DisplayComments(null); }
                 </div>
-
             </div>
         </div>
     </div>
@@ -87,6 +114,7 @@
 <div id="AddCommentForm" style="display:none">
     <form asp-controller="Comments" asp-action="Create" method="post">
         <input type="hidden" name="PostId" value="@this.Model.Id" />
+        <input type="hidden" name="ParentId" value="0" />
         <div>
             <label for="Content"></label>
             <textarea name="Content" id="Content" class="form-control"></textarea>
@@ -99,8 +127,12 @@
 
 @section Scripts {
     <script>
-        function showAddCommentForm() {
-            $("#AddCommentForm").toggle();
+        function showAddCommentForm(parentId) {
+            $("#AddCommentForm input[name='ParentId']").val(parentId);
+            $("#AddCommentForm").show();
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $("#AddCommentForm").offset().top
+            }, 1000);
         }
 
         function sendVote(postId, isUpVote) {
