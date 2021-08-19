@@ -83,15 +83,6 @@
         [Authorize]
         public async Task<IActionResult> Edit(UserViewModel userView, IFormFile image)
         {
-            if (image == null)
-            {
-                this.ModelState.AddModelError("Image", "Image is not valid!");
-            }
-
-            var imageInMemory = new MemoryStream();
-            image.CopyTo(imageInMemory);
-            var imageBytes = imageInMemory.ToArray();
-
             if (!this.ModelState.IsValid)
             {
                 return this.View(userView);
@@ -101,10 +92,23 @@
 
             if (user == null)
             {
-                throw new System.Exception("Error!");
+                this.ModelState.AddModelError("User", "User is not valid!");
+                return this.View(userView);
             }
 
-            user.UserImage = imageBytes;
+            if (image == null)
+            {
+                this.ModelState.AddModelError("Image", "Image is not valid!");
+            }
+
+            if (image != null)
+            {
+                var imageInMemory = new MemoryStream();
+                image.CopyTo(imageInMemory);
+                var imageBytes = imageInMemory.ToArray();
+                user.UserImage = imageBytes;
+            }
+
             user.NickName = userView.NickName;
 
             await this.db.SaveChangesAsync();
