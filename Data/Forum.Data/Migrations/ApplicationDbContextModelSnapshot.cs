@@ -120,6 +120,9 @@ namespace Forum.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<byte[]>("UserImage")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
