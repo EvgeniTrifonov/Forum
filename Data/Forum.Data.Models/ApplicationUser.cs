@@ -19,6 +19,8 @@ namespace Forum.Data.Models
             this.Posts = new HashSet<Post>();
         }
 
+        public string NickName { get; set; }
+
         public byte[] UserImage { get; set; }
 
         // Audit info

@@ -1,0 +1,29 @@
+﻿@model UserViewModel
+@{
+    this.ViewData["Title"] = "User";
+}
+
+<h1>@this.ViewData["Title"]</h1>
+
+
+<form method="post" enctype="multipart/form-data" asp-action="Edit">
+    <div>
+        <input asp-for="@Model.Id" class="form-control" hidden />
+    </div>
+    <div>
+        <input asp-for="@Model.Email" class="form-control" hidden />
+    </div>
+    <div>
+        <input asp-for="@Model.UserName" class="form-control" hidden />
+    </div>
+    <div>
+        <label asp-for="@Model.NickName"></label>
+        <input asp-for="@Model.NickName" class="form-control" />
+        <span asp-validation-for="@Model.NickName" class="text-danger"></span>
+    </div>
+    <div>
+        <input type="file" name="image">
+    </div>
+    <hr />
+    <input type="submit" class="btn btn-primary" />
+</form>

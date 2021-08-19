@@ -1,6 +1,11 @@
 ﻿@model PostViewModel
+@using Forum.Data.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
 @{
     this.ViewData["Title"] = Model.Title;
+    var arrPost = UserManager.Users.FirstOrDefault(u => u.UserName == Model.UserUserName).UserImage;
+    string base64StringPost = "data:image/jpeg;base64," + Convert.ToBase64String(arrPost, 0, arrPost.Length);
     void DisplayComments(int? parentId)
     {
         var comments = this.Model.Comments.Where(x => x.ParentId == parentId);
@@ -11,13 +16,15 @@
 
         @foreach (var comment in comments)
         {
+            var arrComm = UserManager.Users.FirstOrDefault(u => u.UserName == comment.UserUserName).UserImage;
+            string base64StringComm = "data:image/jpeg;base64," + Convert.ToBase64String(arrComm, 0, arrComm.Length);
             <div class="container-fluid mt-100">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card mb-4">
                             <div class="card-header">
                                 <div class="media flex-wrap w-100 align-items-center">
-                                    <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1574583246/AAA/2.jpg" class="d-block ui-w-40 rounded-circle" alt="">
+                                    <img src="@base64StringComm" width="70" height="70" class="d-block ui-w-40 rounded-circle" alt="">
                                     <div class="media-body ml-3">
                                         @comment.UserUserName
                                         <div class="text-muted small">
@@ -62,7 +69,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="media flex-wrap w-100 align-items-center">
-                        <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1574583246/AAA/2.jpg" class="d-block ui-w-40 rounded-circle" alt="">
+                        <img src="@base64StringPost" width="70" height="70" class="d-block ui-w-40 rounded-circle" alt="">
                         <div class="media-body ml-3">
                             @Model.UserUserName
                             <div class="text-muted small">
