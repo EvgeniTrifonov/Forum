@@ -27,6 +27,7 @@
                 {
                     Email = email,
                     UserName = email,
+                    UserImage = Convert.FromBase64String(ImageInfo.Image),
                 };
 
                 await userManager.CreateAsync(admin, "admin12");
