@@ -1,10 +1,11 @@
 ﻿namespace Forum.Web.Areas.Identity.Pages.Account.Manage
 {
-    using System.ComponentModel.DataAnnotations;
+    using System.IO;
     using System.Threading.Tasks;
 
-    using Forum.Data.Common.Repositories;
+    using Forum.Data;
     using Forum.Data.Models;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,14 +13,14 @@
     public partial class IndexModel : PageModel
     {
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly ApplicationDbContext db;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            ApplicationDbContext db)
         {
             this.userManager = userManager;
-            this.signInManager = signInManager;
+            this.db = db;
         }
 
         public string Username { get; set; }
@@ -28,70 +29,54 @@
         public string StatusMessage { get; set; }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public UserViewModel Input { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await this.userManager.GetUserAsync(this.User);
-            if (user == null)
+            this.Input = new UserViewModel
             {
-                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
-            }
-
-            await this.LoadAsync(user);
+                Id = user.Id,
+                UserImage = user.UserImage,
+                NickName = user.NickName,
+            };
             return this.Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile image)
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            var user = this.db.Users.Find(this.Input.Id);
+
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
-            }
-
-            if (!this.ModelState.IsValid)
-            {
-                await this.LoadAsync(user);
                 return this.Page();
             }
 
-            var phoneNumber = await this.userManager.GetPhoneNumberAsync(user);
-            if (this.Input.PhoneNumber != phoneNumber)
+            if (image != null)
             {
-                var setPhoneResult = await this.userManager.SetPhoneNumberAsync(user, this.Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    this.StatusMessage = "Unexpected error when trying to set phone number.";
-                    return this.RedirectToPage();
-                }
+                var imageInMemory = new MemoryStream();
+                image.CopyTo(imageInMemory);
+                var imageBytes = imageInMemory.ToArray();
+                user.UserImage = imageBytes;
             }
 
-            await this.signInManager.RefreshSignInAsync(user);
-            this.StatusMessage = "Your profile has been updated";
-            return this.RedirectToPage();
+            user.NickName = this.Input.NickName;
+
+            await this.db.SaveChangesAsync();
+
+            return this.Page();
         }
 
-        private async Task LoadAsync(ApplicationUser user)
+        public class UserViewModel
         {
-            var phoneNumber = await this.userManager.GetPhoneNumberAsync(user);
+            [BindProperty]
+            public string Id { get; set; }
 
-            this.Username = user.UserName;
+            [BindProperty]
+            public byte[] UserImage { get; set; }
 
-            this.Input = new InputModel
-            {
-                PhoneNumber = phoneNumber,
-            };
-        }
-
-        public class InputModel
-        {
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
-
-            [Display(Name = "User Name")]
-            public string Username { get; set; }
+            [BindProperty]
+            public string NickName { get; set; }
         }
     }
 }

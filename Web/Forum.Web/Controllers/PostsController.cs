@@ -63,57 +63,5 @@
             var postId = await this.postsService.CreateAsync(input.Title, input.Content, input.CategoryId, user.Id);
             return this.RedirectToAction("ById", new { id = postId });
         }
-
-        [Authorize]
-        public async Task<IActionResult> Edit()
-        {
-            var user = await this.userManager.GetUserAsync(this.User);
-            var viewModel = new UserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                UserImage = user.UserImage,
-                NickName = user.NickName,
-            };
-            return this.View(viewModel);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Edit(UserViewModel userView, IFormFile image)
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(userView);
-            }
-
-            var user = this.db.Users.Find(userView.Id);
-
-            if (user == null)
-            {
-                this.ModelState.AddModelError("User", "User is not valid!");
-                return this.View(userView);
-            }
-
-            if (image == null)
-            {
-                this.ModelState.AddModelError("Image", "Image is not valid!");
-            }
-
-            if (image != null)
-            {
-                var imageInMemory = new MemoryStream();
-                image.CopyTo(imageInMemory);
-                var imageBytes = imageInMemory.ToArray();
-                user.UserImage = imageBytes;
-            }
-
-            user.NickName = userView.NickName;
-
-            await this.db.SaveChangesAsync();
-
-            return this.RedirectToAction("Index", "Home");
-        }
     }
 }
