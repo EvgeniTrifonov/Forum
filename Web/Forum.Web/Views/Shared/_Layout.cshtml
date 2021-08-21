@@ -24,6 +24,12 @@
                         <li class="nav-item">
                             <a class="navbar-brand" asp-area="" asp-controller="Posts" asp-action="Create">Create post</a>
                         </li>
+                        @if (this.User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="navbar-brand" asp-area="" asp-controller="Posts" asp-action="Index">Edit post</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

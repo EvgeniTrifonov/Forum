@@ -1,10 +1,11 @@
 ﻿namespace Forum.Web.Areas.Identity.Pages.Account
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
     using System.Threading.Tasks;
-    using Forum.Data;
+
     using Forum.Data.Models;
+    using Forum.Data.Seeding;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -15,16 +16,13 @@
     {
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly ApplicationDbContext db;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            ApplicationDbContext db)
+            SignInManager<ApplicationUser> signInManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-            this.db = db;
         }
 
         [BindProperty]
@@ -47,7 +45,7 @@
                 {
                     UserName = this.Input.Email,
                     Email = this.Input.Email,
-                    UserImage = this.db.Users.FirstOrDefault(u => u.UserName == "admin@forum.com").UserImage,
+                    UserImage = Convert.FromBase64String(ImageInfo.Image),
                 };
                 var result = await this.userManager.CreateAsync(user, this.Input.Password);
                 if (result.Succeeded)
