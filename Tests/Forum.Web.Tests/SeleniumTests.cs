@@ -23,7 +23,7 @@
             this.browser = new RemoteWebDriver(opts);
         }
 
-        [Fact]
+        //[Fact]
         public void FooterOfThePageContainsPrivacyLink()
         {
             this.browser.Navigate().GoToUrl(this.server.RootUri);
